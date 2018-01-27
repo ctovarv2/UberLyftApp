@@ -13,6 +13,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -40,6 +46,23 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        List<String> responses = UberUtils.makeRequests("https://api.uber.com/v1.2/estimates/time?start_latitude=30.615011&start_longitude=-96.342476", "https://api.uber.com/v1.2/estimates/price?start_latitude=30.615011&start_longitude=-96.342476&end_latitude=30.591330&end_longitude=-96.344744");
+        if(responses != null) {
+            String uberTimes = responses.get(0);
+            String uberPrices = responses.get(1);
+            try {
+                List<Uber> ubers = JsonParser.getAvailableUbers(uberTimes, uberPrices);
+                System.out.println("--- Uber Info ---");
+                for (Uber uber: ubers) {
+                    System.out.println("Type: " + uber.getVehicleType());
+                    System.out.println("Time: " + uber.getTimeEstimate());
+                    System.out.println("Price: " + uber.getPriceEstimate());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
