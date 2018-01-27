@@ -1,5 +1,8 @@
 package com.example.chris.tamuhack;
 
+import android.util.Log;
+import android.widget.TextView;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,6 +15,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,6 +31,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final String TAG = "";
+    public static String INPUT_ADDRESS = " ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +76,23 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
         }
+
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                Log.i(TAG, "Place: " + place.getName());
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i(TAG, "An error occurred: " + status);
+            }
+        });
     }
 
     @Override
@@ -121,4 +151,19 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    public void saveAddress(View view){
+//        TextView tv1 = (TextView)findViewById(R.id.textView3);
+//        EditText inputField = (EditText) findViewById(R.id.editText);
+//        String address = inputField.getText().toString();
+//
+//        INPUT_ADDRESS = address;
+//
+//        tv1.setText(INPUT_ADDRESS);
+    }
+
+
+
+
+
 }
