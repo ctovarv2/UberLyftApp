@@ -363,7 +363,20 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_about) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("TAMUHack 2018. \n\nTeam Members: \n\t\t\t\tTyler Carlson \n\t\t\t\tChristian Tovar \n\t\t\t\tJuan Vasquez")
+            builder.setMessage("Catch-a-Ride is an app that simplifies local traveling by gathering" +
+                            " information from Uber/Lyft and reccomends the best ride." +
+                    "\n\nHow to use:" +
+                            "\n\t- Search for an address you wish to go." +
+                            "\n\t- Click the bottom right button to show results" +
+                            "\n\t- Rides are outlined according to the following:" +
+                            "\n\t\t\tGreen(Closest and Cheapest)" +
+                    "\n\t\t\tBlue(Closest)" +
+                    "\n\t\t\tWhite(Cheapest)"+
+                    "\n\nTeam Members: " +
+                    "\n\t\t\t\tTyler Carlson " +
+                    "\n\t\t\t\tChristian Tovar " +
+                    "\n\t\t\t\tJuan Vasquez"+
+                    "\n\n\nMade for TAMUHack 2018. ")
                     .setTitle("About")
                     .setPositiveButton("Okay", new DialogInterface.OnClickListener(){
                         public void onClick(DialogInterface dialog, int id){
