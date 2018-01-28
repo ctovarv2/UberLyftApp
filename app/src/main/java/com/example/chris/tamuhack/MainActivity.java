@@ -1,8 +1,5 @@
 package com.example.chris.tamuhack;
 
-import android.util.Log;
-import android.widget.TextView;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -23,10 +19,6 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -60,10 +52,13 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        List<String> responses = UberUtils.makeRequests("https://api.uber.com/v1.2/estimates/time?start_latitude=30.615011&start_longitude=-96.342476", "https://api.uber.com/v1.2/estimates/price?start_latitude=30.615011&start_longitude=-96.342476&end_latitude=30.591330&end_longitude=-96.344744");
-        if(responses != null) {
-            String uberTimes = responses.get(0);
-            String uberPrices = responses.get(1);
+        List<String> uberResponses = RideUtils.getAvailableUbers("https://api.uber.com/v1.2/estimates/time?start_latitude=30.615011&start_longitude=-96.342476", "https://api.uber.com/v1.2/estimates/price?start_latitude=30.615011&start_longitude=-96.342476&end_latitude=30.591330&end_longitude=-96.344744");
+        List<String> lyftResponses = RideUtils.getAvailableLyfts("https://api.lyft.com/v1/eta?lat=30.615011&lng=-96.342476", "https://api.lyft.com/v1/cost?start_lat=30.615011&start_lng=-96.342476&end_lat=30.591330&end_lng=-96.344744");
+        if(uberResponses != null) {
+            String uberTimes = uberResponses.get(0);
+            String uberPrices = uberResponses.get(1);
+            String lyftTimes = lyftResponses.get(0);
+            String lyftPrices = lyftResponses.get(1);
             try {
                 List<Uber> ubers = JsonParser.getAvailableUbers(uberTimes, uberPrices);
                 System.out.println("--- Uber Info ---");
@@ -72,6 +67,25 @@ public class MainActivity extends AppCompatActivity
                     System.out.println("Time: " + uber.getTimeEstimate());
                     System.out.println("Price: " + uber.getPriceEstimate());
                 }
+
+                List<Lyft> lyfts = JsonParser.getAvailableLyfts(lyftTimes, lyftPrices);
+                System.out.println("--- Lyft Info ---");
+                for (Lyft lyft: lyfts) {
+                    System.out.println("Type: " + lyft.getVehicleType());
+                    System.out.println("Time: " + lyft.getTimeEstimate());
+                    System.out.println("Price: " + lyft.getPriceEstimate());
+                }
+
+                Uber shortestUber = RideUtils.getShortestUber(ubers);
+                Uber cheapestUber = RideUtils.getCheapestUber(ubers);
+                Lyft shortestLyft = RideUtils.getShortestLyft(lyfts);
+                Lyft cheapestLyft = RideUtils.getCheapestLyft(lyfts);
+
+                System.out.println("--- Shortest Uber ---\n" + shortestUber.toString());
+                System.out.println("--- Cheapest Uber ---\n" + cheapestUber.toString());
+                System.out.println("--- Shortest Lyft ---\n" + shortestLyft.toString());
+                System.out.println("--- Cheapest Lyft ---\n" + cheapestLyft.toString());
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
