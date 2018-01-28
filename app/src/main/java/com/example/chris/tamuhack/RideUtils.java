@@ -34,7 +34,9 @@ public class RideUtils {
                 shortestUber = currentUber;
                 firstUber = false;
             } else {
-                if (currentUber.getTimeEstimate() < shortestUber.getTimeEstimate()) {
+                if (currentUber.getTimeEstimate() == -1) {
+                    continue;
+                }else if (currentUber.getTimeEstimate() < shortestUber.getTimeEstimate()) {
                     shortestUber = currentUber;
                 }
             }
@@ -50,7 +52,9 @@ public class RideUtils {
                 cheapestUber = currentUber;
                 firstUber = false;
             } else {
-                if (currentUber.getMaxPrice() < cheapestUber.getMaxPrice()) {
+                if (currentUber.getMaxPrice() == -1) {
+                    continue;
+                }else if (currentUber.getMaxPrice() < cheapestUber.getMaxPrice()) {
                     cheapestUber = currentUber;
                 }
             }
@@ -66,7 +70,9 @@ public class RideUtils {
                 shortestLyft = currentLyft;
                 firstLyft = false;
             } else {
-                if (currentLyft.getTimeEstimate() < shortestLyft.getTimeEstimate()) {
+                if (currentLyft.getTimeEstimate() == -1) {
+                    continue;
+                }else if (currentLyft.getTimeEstimate() < shortestLyft.getTimeEstimate()) {
                     shortestLyft = currentLyft;
                 }
             }
@@ -82,7 +88,9 @@ public class RideUtils {
                 cheapestLyft = currentLyft;
                 firstLyft = false;
             } else {
-                if (currentLyft.getMaxPrice() < cheapestLyft.getMaxPrice()) {
+                if (currentLyft.getMaxPrice() == -1) {
+                    continue;
+                }else if (currentLyft.getMaxPrice() < cheapestLyft.getMaxPrice()) {
                     cheapestLyft = currentLyft;
                 }
             }
@@ -90,7 +98,7 @@ public class RideUtils {
         return cheapestLyft;
     }
 
-    public static List<String> getAvailableUbers(String myLat, String myLong, String destLat, String destLong) {
+    public static List<Uber> getAvailableUbers(double myLat, double myLong, double destLat, double destLong) {
         List<String> responses = new ArrayList<>();
         HttpsURLConnection con = null;
         boolean timeSuccess = false;
@@ -176,7 +184,7 @@ public class RideUtils {
         }
 
         if(timeSuccess && priceSuccess) {
-            return responses;
+            return JsonParser.getAvailableUbers(responses.get(0), responses.get(1));
         } else {
             return null;
         }
@@ -245,7 +253,7 @@ public class RideUtils {
         }
     }
 
-    public static List<String> getAvailableLyfts(String myLat, String myLong, String destLat, String destLong) {
+    public static List<Lyft> getAvailableLyfts(double myLat, double myLong, double destLat, double destLong) {
         List<String> responses = new ArrayList<>();
         HttpsURLConnection con = null;
         boolean timeSuccess = false;
@@ -332,7 +340,7 @@ public class RideUtils {
             }
 
             if(timeSuccess && priceSuccess) {
-                return responses;
+                return JsonParser.getAvailableLyfts(responses.get(0), responses.get(1));
             } else {
                 return null;
             }

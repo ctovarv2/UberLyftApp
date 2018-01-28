@@ -90,6 +90,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
+            android:id="@+id/uber_selections_layout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:isScrollContainer="false"
@@ -135,7 +136,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
-            android:id="@+id/horizLayout"
+            android:id="@+id/lyft_selections_layout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="horizontal">

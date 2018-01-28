@@ -50,6 +50,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -79,6 +80,11 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        LinearLayout uberLayout = (LinearLayout) findViewById(R.id.uber_selections_layout);
+        LinearLayout lyftLayout = (LinearLayout) findViewById(R.id.lyft_selections_layout);
+        uberLayout.removeAllViews();
+        lyftLayout.removeAllViews();
+
         // Action Button (Bottom Left Corner)
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -102,19 +108,13 @@ public class MainActivity extends AppCompatActivity
                             .setAction("Action", null).show();*/
                     fab.setImageResource(android.R.drawable.arrow_down_float);
                     showing = true;
-                    Button myButton = new Button(MainActivity.this);
-                    myButton.setText("Push Me");
-
-                    LinearLayout ll = (LinearLayout)findViewById(R.id.horizLayout);
-                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    ll.addView(myButton, lp);
                 }
             }
         });
 
         // Navigation Drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
@@ -158,6 +158,62 @@ public class MainActivity extends AppCompatActivity
                     System.out.println("NOT INCLUDED.");
                     gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(midpoint, zoom - 1));
                 }*/
+
+                // Get the available ubers and lyfts & filtered
+                List<Uber> availableUbers = RideUtils.getAvailableUbers(userCoords.latitude, userCoords.longitude, destinationCoords.latitude, destinationCoords.longitude);
+                List<Lyft> availableLyfts = RideUtils.getAvailableLyfts(userCoords.latitude, userCoords.longitude, destinationCoords.latitude, destinationCoords.longitude);
+                Uber shortestUber = RideUtils.getShortestUber(availableUbers);
+                Uber cheapestUber = RideUtils.getCheapestUber(availableUbers);
+                Lyft shortestLyft = RideUtils.getShortestLyft(availableLyfts);
+                Lyft cheapestLyft = RideUtils.getCheapestLyft(availableLyfts);
+
+                // Create buttons appropriately for ubers and lyfts
+                LinearLayout uberLayout = (LinearLayout)findViewById(R.id.uber_selections_layout);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                for(Uber uber : availableUbers) {
+                    Button uberButton = new Button(MainActivity.this);
+                    String timeEstimate = Integer.toString(uber.getTimeEstimate());
+                    if (timeEstimate.equals("-1")) {
+                        timeEstimate = "N/A";
+                    } else {
+                        timeEstimate += " Minutes";
+                    }
+                    String priceEstimate = uber.getPriceEstimate();
+                    if (priceEstimate == null) {
+                        priceEstimate = "N/A";
+                    }
+                    uberButton.setText(uber.getVehicleType() + "\n" + timeEstimate + "\n" + priceEstimate);
+                    uberButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            RedirectUtils.deepLinkIntoUber(destinationCoords.latitude, destinationCoords.longitude, MainActivity.this, MainActivity.this);
+                        }
+                    });
+                    uberLayout.addView(uberButton, layoutParams);
+                }
+
+                LinearLayout lyftLayout = (LinearLayout)findViewById(R.id.lyft_selections_layout);
+                for(Lyft lyft : availableLyfts) {
+                    Button lyftButton = new Button(MainActivity.this);
+                    String timeEstimate = Integer.toString(lyft.getTimeEstimate());
+                    if (timeEstimate.equals("-1")) {
+                        timeEstimate = "N/A";
+                    } else {
+                        timeEstimate += " Minutes";
+                    }
+                    String priceEstimate = lyft.getPriceEstimate();
+                    if (priceEstimate == null) {
+                        priceEstimate = "N/A";
+                    }
+                    lyftButton.setText(lyft.getVehicleType() + "\n" + timeEstimate + "\n" + priceEstimate);
+                    lyftButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            RedirectUtils.deepLinkIntoLyft(userCoords.latitude, userCoords.longitude, destinationCoords.latitude, destinationCoords.longitude, MainActivity.this, MainActivity.this);
+                        }
+                    });
+                    lyftLayout.addView(lyftButton, layoutParams);
+                }
             }
 
             @Override

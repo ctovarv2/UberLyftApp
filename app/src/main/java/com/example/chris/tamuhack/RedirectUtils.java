@@ -33,7 +33,7 @@ public class RedirectUtils {
         return false;
     }
 
-    public static void deepLinkIntoUber(String destLat, String destLong, Context context, Activity activity) {
+    public static void deepLinkIntoUber(double destLat, double destLong, Context context, Activity activity) {
         if (RedirectUtils.isPackageInstalled(context, UBER_PACKAGE)) {
             // Uber is installed on phone
             RedirectUtils.openLink(activity, "uber://?action=setPickup&client_id="+RideUtils.getUberClientId()+"&pickup=my_location&dropoff[latitude]="+destLat+"&dropoff[longitude]="+destLong);
@@ -44,7 +44,7 @@ public class RedirectUtils {
         }
     }
 
-    public static void deepLinkIntoLyft(String myLat, String myLong, String destLat, String destLong, Context context, Activity activity) {
+    public static void deepLinkIntoLyft(double myLat, double myLong, double destLat, double destLong, Context context, Activity activity) {
         if (RedirectUtils.isPackageInstalled(context, LYFT_PACKAGE)) {
             // Lyft is installed on phone
             RedirectUtils.openLink(activity, "lyft://ridetype?id=Lyft&pickup[latitude]=" + myLat + "&pickup[longitude]=" + myLong + "&destination[latitude]=" + destLat + "&destination[longitude]=" + destLong);
