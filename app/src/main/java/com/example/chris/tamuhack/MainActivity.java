@@ -1,7 +1,9 @@
 package com.example.chris.tamuhack;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -12,7 +14,9 @@ import android.location.LocationManager;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.content.Intent;
 import android.os.Bundle;
@@ -80,17 +84,23 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(showing == true){
-                    findViewById(R.id.selections).setVisibility(view.INVISIBLE);
-                    /*Snackbar.make(view, "Minimized Rides.", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();*/
-                    showing = false;
-                } else {
+//                if(showing == true){
+//                    findViewById(R.id.selections).setVisibility(view.INVISIBLE);
+//                    /*Snackbar.make(view, "Minimized Rides.", Snackbar.LENGTH_LONG)
+//                            .setAction("Action", null).show();*/
+//                    showing = false;
+//                } else {
                     findViewById(R.id.selections).setVisibility(view.VISIBLE);
                     Snackbar.make(view, "Confirm Ride Selection.", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                     showing = true;
-                }
+                    Button myButton = new Button(MainActivity.this);
+                    myButton.setText("Push Me");
+
+                    LinearLayout ll = (LinearLayout)findViewById(R.id.horizLayout);
+//                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    ll.addView(myButton);
+//                }
             }
         });
 
@@ -103,46 +113,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        // Uber/Lyft Example
-        /*List<String> uberResponses = RideUtils.getAvailableUbers("https://api.uber.com/v1.2/estimates/time?start_latitude=30.615011&start_longitude=-96.342476", "https://api.uber.com/v1.2/estimates/price?start_latitude=30.615011&start_longitude=-96.342476&end_latitude=30.591330&end_longitude=-96.344744");
-        List<String> lyftResponses = RideUtils.getAvailableLyfts("https://api.lyft.com/v1/eta?lat=30.615011&lng=-96.342476", "https://api.lyft.com/v1/cost?start_lat=30.615011&start_lng=-96.342476&end_lat=30.591330&end_lng=-96.344744");
-        if(uberResponses != null && lyftResponses != null) {
-            String uberTimes = uberResponses.get(0);
-            String uberPrices = uberResponses.get(1);
-            String lyftTimes = lyftResponses.get(0);
-            String lyftPrices = lyftResponses.get(1);
-
-            try {
-                List<Uber> ubers = JsonParser.getAvailableUbers(uberTimes, uberPrices);
-                System.out.println("--- Uber Info ---");
-                for (Uber uber : ubers) {
-                    System.out.println("Type: " + uber.getVehicleType());
-                    System.out.println("Time: " + uber.getTimeEstimate());
-                    System.out.println("Price: " + uber.getPriceEstimate());
-                }
-
-                List<Lyft> lyfts = JsonParser.getAvailableLyfts(lyftTimes, lyftPrices);
-                System.out.println("--- Lyft Info ---");
-                for (Lyft lyft : lyfts) {
-                    System.out.println("Type: " + lyft.getVehicleType());
-                    System.out.println("Time: " + lyft.getTimeEstimate());
-                    System.out.println("Price: " + lyft.getPriceEstimate());
-                }
-
-                Uber shortestUber = RideUtils.getShortestUber(ubers);
-                Uber cheapestUber = RideUtils.getCheapestUber(ubers);
-                Lyft shortestLyft = RideUtils.getShortestLyft(lyfts);
-                Lyft cheapestLyft = RideUtils.getCheapestLyft(lyfts);
-
-                System.out.println("--- Shortest Uber ---\n" + shortestUber.toString());
-                System.out.println("--- Cheapest Uber ---\n" + cheapestUber.toString());
-                System.out.println("--- Shortest Lyft ---\n" + shortestLyft.toString());
-                System.out.println("--- Cheapest Lyft ---\n" + cheapestLyft.toString());
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }*/
 
         // Search Bar
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)

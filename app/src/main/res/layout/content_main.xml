@@ -85,6 +85,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
+            android:id="@+id/horizLayout"
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:orientation="horizontal">

@@ -22,6 +22,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class RideUtils {
 
     private static final String UBER_SERVER_TOKEN = "gGXk0zoi6TLBKZKXMnhC9Igm2CjBVVbkHjgY1j12";
+    private static final String UBER_CLIENT_ID = "SHPQJcLpxERG1Iac_6jyx9Sa9-l6SrT2";
     private static final String LYFT_CLIENT_ID = "f9_flU3DCaYx";
     private static final String LYFT_CLIENT_SECRET = "HVNQyl47Vr0l40XC1JLw9WOAo9zJlvAK";
 
@@ -89,7 +90,7 @@ public class RideUtils {
         return cheapestLyft;
     }
 
-    public static List<String> getAvailableUbers(String queryTime, String queryPrice) {
+    public static List<String> getAvailableUbers(String myLat, String myLong, String destLat, String destLong) {
         List<String> responses = new ArrayList<>();
         HttpsURLConnection con = null;
         boolean timeSuccess = false;
@@ -97,6 +98,9 @@ public class RideUtils {
         StringBuilder response = new StringBuilder();
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+        String queryTime = "https://api.uber.com/v1.2/estimates/time?start_latitude="+myLat+"&start_longitude="+myLong;
+        String queryPrice = "https://api.uber.com/v1.2/estimates/price?start_latitude="+myLat+"&start_longitude="+myLong+"&end_latitude="+destLat+"&end_longitude="+destLong;
 
         try {
 
@@ -241,8 +245,7 @@ public class RideUtils {
         }
     }
 
-
-    public static List<String> getAvailableLyfts(String queryTime, String queryPrice) {
+    public static List<String> getAvailableLyfts(String myLat, String myLong, String destLat, String destLong) {
         List<String> responses = new ArrayList<>();
         HttpsURLConnection con = null;
         boolean timeSuccess = false;
@@ -250,6 +253,9 @@ public class RideUtils {
         StringBuilder response = new StringBuilder();
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+        String queryTime = "https://api.lyft.com/v1/eta?lat="+myLat+"&lng="+myLong;
+        String queryPrice = "https://api.lyft.com/v1/cost?start_lat="+myLat+"&start_lng="+myLong+"&end_lat="+destLat+"&end_lng="+destLong;
 
         String bearerToken = RideUtils.getLyftBearer();
         if (bearerToken != null) {
@@ -335,4 +341,19 @@ public class RideUtils {
         }
     }
 
+    public static String getUberServerToken() {
+        return UBER_SERVER_TOKEN;
+    }
+
+    public static String getUberClientId() {
+        return UBER_CLIENT_ID;
+    }
+
+    public static String getLyftClientId() {
+        return LYFT_CLIENT_ID;
+    }
+
+    public static String getLyftClientSecret() {
+        return LYFT_CLIENT_SECRET;
+    }
 }
