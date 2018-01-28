@@ -10,16 +10,17 @@
 
 
     <!--<com.google.android.gms.maps.MapView-->
-        <!--android:id="@+id/mapView"-->
-        <!--android:layout_width="182dp"-->
-        <!--android:layout_height="67dp"-->
-        <!--android:visibility="visible"-->
-        <!--app:layout_constraintLeft_toLeftOf="parent"-->
-        <!--app:layout_constraintRight_toRightOf="parent"-->
-        <!--tools:layout_editor_absoluteY="96dp"-->
-        <!--app:layout_constraintHorizontal_bias="0.458" />-->
+    <!--android:id="@+id/mapView"-->
+    <!--android:layout_width="182dp"-->
+    <!--android:layout_height="67dp"-->
+    <!--android:visibility="visible"-->
+    <!--app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--app:layout_constraintRight_toRightOf="parent"-->
+    <!--tools:layout_editor_absoluteY="96dp"-->
+    <!--app:layout_constraintHorizontal_bias="0.458" />-->
 
     <!-- Google Map -->
+
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -49,6 +50,7 @@
         app:layout_constraintTop_toTopOf="parent" />-->
 
     <!-- White Box -->
+
     <TextView
         android:id="@+id/textView2"
         android:layout_width="340dp"
@@ -75,30 +77,75 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <HorizontalScrollView
-        android:id="@+id/selections"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:id="@+id/uber_selections"
+        android:layout_width="0dp"
+        android:layout_height="75dp"
+        android:layout_marginBottom="107dp"
+        android:layout_marginEnd="88dp"
+        android:layout_marginStart="16dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.177"
         app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:isScrollContainer="false"
+            android:keepScreenOn="false"
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button"
-                style="@style/Widget.AppCompat.Button"
+                android:id="@+id/button14"
                 android:layout_width="wrap_content"
-                android:layout_height="109dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/colorAccent"
-                android:text="uberX\n$10.57\n20min"
-                android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-                android:visibility="visible" />
+                android:text="Button" />
+
+            <Button
+                android:id="@+id/button16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Button" />
+
+            <Button
+                android:id="@+id/button15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Button" />
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:id="@+id/lyft_selections"
+        android:layout_width="0dp"
+        android:layout_height="75dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="88dp"
+        android:layout_marginStart="16dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button17"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Button" />
+
         </LinearLayout>
 
     </HorizontalScrollView>
