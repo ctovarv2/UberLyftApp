@@ -22,6 +22,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class RideUtils {
 
     private static final String UBER_SERVER_TOKEN = "gGXk0zoi6TLBKZKXMnhC9Igm2CjBVVbkHjgY1j12";
+    private static final String UBER_CLIENT_ID = "SHPQJcLpxERG1Iac_6jyx9Sa9-l6SrT2";
     private static final String LYFT_CLIENT_ID = "f9_flU3DCaYx";
     private static final String LYFT_CLIENT_SECRET = "HVNQyl47Vr0l40XC1JLw9WOAo9zJlvAK";
 
@@ -33,7 +34,9 @@ public class RideUtils {
                 shortestUber = currentUber;
                 firstUber = false;
             } else {
-                if (currentUber.getTimeEstimate() < shortestUber.getTimeEstimate()) {
+                if (currentUber.getTimeEstimate() == -1) {
+                    continue;
+                }else if (currentUber.getTimeEstimate() < shortestUber.getTimeEstimate()) {
                     shortestUber = currentUber;
                 }
             }
@@ -49,7 +52,9 @@ public class RideUtils {
                 cheapestUber = currentUber;
                 firstUber = false;
             } else {
-                if (currentUber.getMaxPrice() < cheapestUber.getMaxPrice()) {
+                if (currentUber.getMaxPrice() == -1) {
+                    continue;
+                }else if (currentUber.getMaxPrice() < cheapestUber.getMaxPrice()) {
                     cheapestUber = currentUber;
                 }
             }
@@ -65,7 +70,9 @@ public class RideUtils {
                 shortestLyft = currentLyft;
                 firstLyft = false;
             } else {
-                if (currentLyft.getTimeEstimate() < shortestLyft.getTimeEstimate()) {
+                if (currentLyft.getTimeEstimate() == -1) {
+                    continue;
+                }else if (currentLyft.getTimeEstimate() < shortestLyft.getTimeEstimate()) {
                     shortestLyft = currentLyft;
                 }
             }
@@ -81,7 +88,9 @@ public class RideUtils {
                 cheapestLyft = currentLyft;
                 firstLyft = false;
             } else {
-                if (currentLyft.getMaxPrice() < cheapestLyft.getMaxPrice()) {
+                if (currentLyft.getMaxPrice() == -1) {
+                    continue;
+                }else if (currentLyft.getMaxPrice() < cheapestLyft.getMaxPrice()) {
                     cheapestLyft = currentLyft;
                 }
             }
@@ -89,7 +98,7 @@ public class RideUtils {
         return cheapestLyft;
     }
 
-    public static List<String> getAvailableUbers(String queryTime, String queryPrice) {
+    public static List<Uber> getAvailableUbers(double myLat, double myLong, double destLat, double destLong) {
         List<String> responses = new ArrayList<>();
         HttpsURLConnection con = null;
         boolean timeSuccess = false;
@@ -97,6 +106,9 @@ public class RideUtils {
         StringBuilder response = new StringBuilder();
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+        String queryTime = "https://api.uber.com/v1.2/estimates/time?start_latitude="+myLat+"&start_longitude="+myLong;
+        String queryPrice = "https://api.uber.com/v1.2/estimates/price?start_latitude="+myLat+"&start_longitude="+myLong+"&end_latitude="+destLat+"&end_longitude="+destLong;
 
         try {
 
@@ -172,7 +184,7 @@ public class RideUtils {
         }
 
         if(timeSuccess && priceSuccess) {
-            return responses;
+            return JsonParser.getAvailableUbers(responses.get(0), responses.get(1));
         } else {
             return null;
         }
@@ -241,8 +253,7 @@ public class RideUtils {
         }
     }
 
-
-    public static List<String> getAvailableLyfts(String queryTime, String queryPrice) {
+    public static List<Lyft> getAvailableLyfts(double myLat, double myLong, double destLat, double destLong) {
         List<String> responses = new ArrayList<>();
         HttpsURLConnection con = null;
         boolean timeSuccess = false;
@@ -250,6 +261,9 @@ public class RideUtils {
         StringBuilder response = new StringBuilder();
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+        String queryTime = "https://api.lyft.com/v1/eta?lat="+myLat+"&lng="+myLong;
+        String queryPrice = "https://api.lyft.com/v1/cost?start_lat="+myLat+"&start_lng="+myLong+"&end_lat="+destLat+"&end_lng="+destLong;
 
         String bearerToken = RideUtils.getLyftBearer();
         if (bearerToken != null) {
@@ -326,7 +340,7 @@ public class RideUtils {
             }
 
             if(timeSuccess && priceSuccess) {
-                return responses;
+                return JsonParser.getAvailableLyfts(responses.get(0), responses.get(1));
             } else {
                 return null;
             }
@@ -335,4 +349,19 @@ public class RideUtils {
         }
     }
 
+    public static String getUberServerToken() {
+        return UBER_SERVER_TOKEN;
+    }
+
+    public static String getUberClientId() {
+        return UBER_CLIENT_ID;
+    }
+
+    public static String getLyftClientId() {
+        return LYFT_CLIENT_ID;
+    }
+
+    public static String getLyftClientSecret() {
+        return LYFT_CLIENT_SECRET;
+    }
 }

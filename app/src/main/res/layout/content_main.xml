@@ -10,14 +10,16 @@
 
 
     <!--<com.google.android.gms.maps.MapView-->
-        <!--android:id="@+id/mapView"-->
-        <!--android:layout_width="182dp"-->
-        <!--android:layout_height="67dp"-->
-        <!--android:visibility="visible"-->
-        <!--app:layout_constraintLeft_toLeftOf="parent"-->
-        <!--app:layout_constraintRight_toRightOf="parent"-->
-        <!--tools:layout_editor_absoluteY="96dp"-->
-        <!--app:layout_constraintHorizontal_bias="0.458" />-->
+    <!--android:id="@+id/mapView"-->
+    <!--android:layout_width="182dp"-->
+    <!--android:layout_height="67dp"-->
+    <!--android:visibility="visible"-->
+    <!--app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--app:layout_constraintRight_toRightOf="parent"-->
+    <!--tools:layout_editor_absoluteY="96dp"-->
+    <!--app:layout_constraintHorizontal_bias="0.458" />-->
+
+    <!-- Google Map -->
 
     <fragment
         android:id="@+id/map"
@@ -25,13 +27,14 @@
         android:layout_width="800dp"
         android:layout_height="1250dp"
         android:layout_below="@+id/place_autocomplete_fragment"
-        android:layout_marginRight="-19dp"
-        android:layout_marginTop="-11dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
 
-    <Button
+    <!-- Enter Button -->
+    <!--<Button
         android:id="@+id/button2"
         android:layout_width="100dp"
         android:layout_height="50dp"
@@ -44,27 +47,109 @@
         android:text="Enter"
         android:textColor="@color/colorAccent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />-->
+
+    <!-- White Box -->
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="340dp"
         android:layout_height="50dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="24dp"
         android:layout_marginTop="16dp"
-        android:background="@color/colorAccent"
+        android:background="@android:color/background_light"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Search Bar (AutoComplete) -->
     <fragment
         android:id="@+id/place_autocomplete_fragment"
         android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
         android:layout_width="340dp"
         android:layout_height="50dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <HorizontalScrollView
+        android:id="@+id/uber_selections"
+        android:layout_width="0dp"
+        android:layout_height="75dp"
+        android:layout_marginBottom="107dp"
+        android:layout_marginEnd="88dp"
+        android:layout_marginStart="16dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.177"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:id="@+id/uber_selections_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:isScrollContainer="false"
+            android:keepScreenOn="false"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Button" />
+
+            <Button
+                android:id="@+id/button16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Button" />
+
+            <Button
+                android:id="@+id/button15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Button" />
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:id="@+id/lyft_selections"
+        android:layout_width="0dp"
+        android:layout_height="75dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="88dp"
+        android:layout_marginStart="16dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:id="@+id/lyft_selections_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button17"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Button" />
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
 
 </android.support.constraint.ConstraintLayout>

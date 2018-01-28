@@ -27,8 +27,9 @@ public class JsonParser {
                 JSONObject currentObject = timeArray.getJSONObject(i);
                 Uber currentUber = new Uber();
                 currentUber.setVehicleType(currentObject.getString("localized_display_name"));
-                Double timeEstimate = currentObject.getDouble("estimate");
-                if (timeEstimate != null) {
+                String eta = currentObject.getString("estimate");
+                if (eta != null && !eta.equals("null")) {
+                    Double timeEstimate = currentObject.getDouble("estimate");
                     currentUber.setTimeEstimate((int)timeEstimate.doubleValue()/60);
                 } else {
                     currentUber.setTimeEstimate(-1);
@@ -44,13 +45,19 @@ public class JsonParser {
                 for (Uber uber: ubers) {
                     if (uber.getVehicleType().equals(currentDisplayName)) {
                         foundMatch = true;
-                        String priceEstimate = currentObject.getString("estimate");
-                        Double priceMax = currentObject.getDouble("high_estimate");
-                        if (priceEstimate != null && priceEstimate != "null" && priceMax != null) {
+                        String price = currentObject.getString("estimate");
+                        if (price != null && !price.equals("null")) {
+                            String priceEstimate = currentObject.getString("estimate");
                             uber.setPriceEstimate(priceEstimate);
-                            uber.setMaxPrice(priceMax.doubleValue());
                         } else {
                             uber.setPriceEstimate(null);
+                        }
+
+                        String high = currentObject.getString("high_estimate");
+                        if (high != null && !high.equals("null")) {
+                            Double priceMax = currentObject.getDouble("high_estimate");
+                            uber.setMaxPrice(priceMax.doubleValue());
+                        } else {
                             uber.setMaxPrice(-1);
                         }
                         break;
@@ -59,13 +66,19 @@ public class JsonParser {
                 if (!foundMatch) {
                     Uber newUber = new Uber();
                     newUber.setVehicleType(currentDisplayName);
-                    String priceEstimate = currentObject.getString("estimate");
-                    Double priceMax = currentObject.getDouble("high_estimate");
-                    if (priceEstimate != null && priceEstimate != "null" && priceMax != null) {
+                    String price = currentObject.getString("estimate");
+                    if (price != null && !price.equals("null")) {
+                        String priceEstimate = currentObject.getString("estimate");
                         newUber.setPriceEstimate(priceEstimate);
-                        newUber.setMaxPrice(priceMax.doubleValue());
                     } else {
                         newUber.setPriceEstimate(null);
+                    }
+
+                    String high = currentObject.getString("high_estimate");
+                    if (high != null && !high.equals("null")) {
+                        Double priceMax = currentObject.getDouble("high_estimate");
+                        newUber.setMaxPrice(priceMax.doubleValue());
+                    } else {
                         newUber.setMaxPrice(-1);
                     }
                     newUber.setTimeEstimate(-1);
@@ -94,8 +107,9 @@ public class JsonParser {
                 JSONObject currentObject = timeArray.getJSONObject(i);
                 Lyft currentLyft = new Lyft();
                 currentLyft.setVehicleType(currentObject.getString("display_name"));
-                Double timeEstimate = currentObject.getDouble("eta_seconds");
-                if (timeEstimate != null) {
+                String eta = currentObject.getString("eta_seconds");
+                if(eta != null && !eta.equals("null")) {
+                    Double timeEstimate = currentObject.getDouble("eta_seconds");
                     currentLyft.setTimeEstimate((int)timeEstimate.doubleValue()/60);
                 } else {
                     currentLyft.setTimeEstimate(-1);
@@ -111,9 +125,11 @@ public class JsonParser {
                 for (Lyft lyft: lyfts) {
                     if (lyft.getVehicleType().equals(currentDisplayName)) {
                         foundMatch = true;
-                        Double priceEstimateMin = currentObject.getDouble("estimated_cost_cents_min");
-                        Double priceEstimateMax = currentObject.getDouble("estimated_cost_cents_max");
-                        if (priceEstimateMin != null && priceEstimateMax != null) {
+                        String objMin = currentObject.getString("estimated_cost_cents_min");
+                        String objMax = currentObject.getString("estimated_cost_cents_max");
+                        if(objMin != null && !objMin.equals("null") && objMax != null && !objMax.equals("null")) {
+                            Double priceEstimateMin = currentObject.getDouble("estimated_cost_cents_min");
+                            Double priceEstimateMax = currentObject.getDouble("estimated_cost_cents_max");
                             lyft.setPriceEstimate("$" + priceEstimateMin/100 + "-" + priceEstimateMax/100);
                             lyft.setMaxPrice(priceEstimateMax.doubleValue());
                         } else {
@@ -126,9 +142,11 @@ public class JsonParser {
                 if (!foundMatch) {
                     Lyft newLyft = new Lyft();
                     newLyft.setVehicleType(currentDisplayName);
-                    Double priceEstimateMin = currentObject.getDouble("estimated_cost_cents_min");
-                    Double priceEstimateMax = currentObject.getDouble("estimated_cost_cents_max");
-                    if (priceEstimateMin != null && priceEstimateMax != null) {
+                    String objMin = currentObject.getString("estimated_cost_cents_min");
+                    String objMax = currentObject.getString("estimated_cost_cents_max");
+                    if(objMin != null && !objMin.equals("null") && objMax != null && !objMax.equals("null")) {
+                        Double priceEstimateMin = currentObject.getDouble("estimated_cost_cents_min");
+                        Double priceEstimateMax = currentObject.getDouble("estimated_cost_cents_max");
                         newLyft.setPriceEstimate("$" + priceEstimateMin/100 + "-" + priceEstimateMax/100);
                         newLyft.setMaxPrice(priceEstimateMax.doubleValue());
                     } else {

@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/TAMUHack.iml" filepath="$PROJECT_DIR$/TAMUHack.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../kipva/Desktop/UberLyftApp/TAMUHack.iml" filepath="$PROJECT_DIR$/../../../kipva/Desktop/UberLyftApp/TAMUHack.iml" />
       <module fileurl="file://$PROJECT_DIR$/UberLyftApp.iml" filepath="$PROJECT_DIR$/UberLyftApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
