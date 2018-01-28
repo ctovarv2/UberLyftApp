@@ -92,11 +92,9 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 if(showing == true){
                     findViewById(R.id.uber_selections).setVisibility(view.INVISIBLE);
-                    Snackbar.make(view, "Minimized Rides.", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
                     findViewById(R.id.lyft_selections).setVisibility(view.INVISIBLE);
-                    Snackbar.make(view, "Minimized Rides.", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+//                    Snackbar.make(view, "Minimized Rides.", Snackbar.LENGTH_LONG)
+//                            .setAction("Action", null).show();
                     fab.setImageResource(android.R.drawable.arrow_up_float);
                     showing = false;
                 } else {
@@ -169,6 +167,7 @@ public class MainActivity extends AppCompatActivity
 
                 // Create buttons appropriately for ubers and lyfts
                 LinearLayout uberLayout = (LinearLayout)findViewById(R.id.uber_selections_layout);
+                uberLayout.removeAllViews();
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 for(Uber uber : availableUbers) {
                     Button uberButton = new Button(MainActivity.this);
@@ -193,6 +192,7 @@ public class MainActivity extends AppCompatActivity
                 }
 
                 LinearLayout lyftLayout = (LinearLayout)findViewById(R.id.lyft_selections_layout);
+                lyftLayout.removeAllViews();
                 for(Lyft lyft : availableLyfts) {
                     Button lyftButton = new Button(MainActivity.this);
                     String timeEstimate = Integer.toString(lyft.getTimeEstimate());
