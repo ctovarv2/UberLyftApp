@@ -4,7 +4,7 @@ package com.example.chris.tamuhack;
  * Created by Tyler on 1/27/18.
  */
 
-public class Uber {
+public class Lyft {
 
     private String vehicleType;
 
@@ -14,7 +14,7 @@ public class Uber {
 
     private double maxPrice;
 
-    public Uber() {
+    public Lyft() {
         vehicleType = "";
         timeEstimate = 0;
         priceEstimate = "";
