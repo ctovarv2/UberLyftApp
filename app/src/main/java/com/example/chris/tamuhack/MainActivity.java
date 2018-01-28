@@ -1,5 +1,15 @@
 package com.example.chris.tamuhack;
 
+import android.support.design.widget.NavigationView;
+import android.support.v7.app.AppCompatActivity;
+import android.app.Fragment;
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.util.Log;
+import android.widget.TextView;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,11 +23,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.List;
 
@@ -26,6 +42,11 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = "";
     public static String INPUT_ADDRESS = " ";
+
+    public static Double userLongitude = 0.0;
+    public static Double userLatitude = 0.0;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,11 +59,12 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Confirm Ride Selection", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
 
+        // Navigation
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -54,11 +76,12 @@ public class MainActivity extends AppCompatActivity
 
         List<String> uberResponses = RideUtils.getAvailableUbers("https://api.uber.com/v1.2/estimates/time?start_latitude=30.615011&start_longitude=-96.342476", "https://api.uber.com/v1.2/estimates/price?start_latitude=30.615011&start_longitude=-96.342476&end_latitude=30.591330&end_longitude=-96.344744");
         List<String> lyftResponses = RideUtils.getAvailableLyfts("https://api.lyft.com/v1/eta?lat=30.615011&lng=-96.342476", "https://api.lyft.com/v1/cost?start_lat=30.615011&start_lng=-96.342476&end_lat=30.591330&end_lng=-96.344744");
-        if(uberResponses != null) {
+        if(uberResponses != null && lyftResponses != null) {
             String uberTimes = uberResponses.get(0);
             String uberPrices = uberResponses.get(1);
             String lyftTimes = lyftResponses.get(0);
             String lyftPrices = lyftResponses.get(1);
+
             try {
                 List<Uber> ubers = JsonParser.getAvailableUbers(uberTimes, uberPrices);
                 System.out.println("--- Uber Info ---");
@@ -89,7 +112,7 @@ public class MainActivity extends AppCompatActivity
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+
 
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
@@ -98,7 +121,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
-                System.out.println("Place: " + place.getName());
+                System.out.println("Place: " + place.getAddress());
+                System.out.println("Place: " + place.getLatLng());
             }
 
             @Override
@@ -107,6 +131,38 @@ public class MainActivity extends AppCompatActivity
                 System.out.println("An error occurred: " + status);
             }
         });
+
+        LocationManager locManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+
+        Boolean network_enabled = locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        Location location;
+
+        if(network_enabled == true){
+            location = locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+            if(location != null){
+                userLongitude = location.getLongitude();
+                userLatitude = location.getLatitude();
+
+                System.out.println("----------------------------");
+                System.out.println("User Lat/Long: " + userLatitude + ", " + userLongitude);
+                System.out.println("----------------------------");
+
+
+            }
+        }
+
+        //For Map
+
+
+
+//        setContentView(R.layout.activity_maps);
+//
+//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+//                .findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
+
     }
 
     @Override
@@ -174,10 +230,9 @@ public class MainActivity extends AppCompatActivity
 //        INPUT_ADDRESS = address;
 //
 //        tv1.setText(INPUT_ADDRESS);
+
+        //Fragment fragmentById = getFragmentManager().findFragmentById(R.id.place_autocomplet‌​e_fragment);
+
+
     }
-
-
-
-
-
 }
