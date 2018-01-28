@@ -185,8 +185,10 @@ public class RideUtils {
 
         if(timeSuccess && priceSuccess) {
             return JsonParser.getAvailableUbers(responses.get(0), responses.get(1));
+        } else if(timeSuccess && !priceSuccess) {
+            return JsonParser.getAvailableUbers(responses.get(0), "");
         } else {
-            return null;
+            return new ArrayList<Uber>();
         }
     }
 
@@ -341,11 +343,13 @@ public class RideUtils {
 
             if(timeSuccess && priceSuccess) {
                 return JsonParser.getAvailableLyfts(responses.get(0), responses.get(1));
+            } else if(timeSuccess && !priceSuccess) {
+                return JsonParser.getAvailableLyfts(responses.get(0), "");
             } else {
-                return null;
+                return new ArrayList<Lyft>();
             }
         } else {
-            return null;
+            return new ArrayList<Lyft>();
         }
     }
 

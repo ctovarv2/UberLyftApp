@@ -18,9 +18,13 @@ public class JsonParser {
         try {
             // get Json Arrays
             JSONObject timeObject = new JSONObject(timeResponse);
-            JSONObject priceObject = new JSONObject(priceResponse);
+
             JSONArray timeArray = timeObject.getJSONArray("times");
-            JSONArray priceArray = priceObject.getJSONArray("prices");
+            JSONArray priceArray = new JSONArray();
+            if(!priceResponse.equals("")) {
+                JSONObject priceObject = new JSONObject(priceResponse);
+                priceArray = priceObject.getJSONArray("prices");
+            }
 
             // loop through time Array
             for (int i = 0; i < timeArray.length(); ++i) {
@@ -30,7 +34,7 @@ public class JsonParser {
                 String eta = currentObject.getString("estimate");
                 if (eta != null && !eta.equals("null")) {
                     Double timeEstimate = currentObject.getDouble("estimate");
-                    currentUber.setTimeEstimate((int)timeEstimate.doubleValue()/60);
+                    currentUber.setTimeEstimate((int) timeEstimate.doubleValue() / 60);
                 } else {
                     currentUber.setTimeEstimate(-1);
                 }
@@ -42,7 +46,7 @@ public class JsonParser {
                 JSONObject currentObject = priceArray.getJSONObject(i);
                 String currentDisplayName = currentObject.getString("localized_display_name");
                 boolean foundMatch = false;
-                for (Uber uber: ubers) {
+                for (Uber uber : ubers) {
                     if (uber.getVehicleType().equals(currentDisplayName)) {
                         foundMatch = true;
                         String price = currentObject.getString("estimate");
@@ -84,6 +88,11 @@ public class JsonParser {
                     newUber.setTimeEstimate(-1);
                 }
             }
+            for (Uber uber : ubers) {
+                if(uber.getPriceEstimate().equals("")) {
+                    uber.setPriceEstimate("N/A");
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -98,9 +107,12 @@ public class JsonParser {
         try {
             // get Json Arrays
             JSONObject timeObject = new JSONObject(timeResponse);
-            JSONObject priceObject = new JSONObject(priceResponse);
             JSONArray timeArray = timeObject.getJSONArray("eta_estimates");
-            JSONArray priceArray = priceObject.getJSONArray("cost_estimates");
+            JSONArray priceArray = new JSONArray();
+            if(!priceResponse.equals("")) {
+                JSONObject priceObject = new JSONObject(priceResponse);
+                priceArray = priceObject.getJSONArray("cost_estimates");
+            }
 
             // loop through time Array
             for (int i = 0; i < timeArray.length(); ++i) {
@@ -154,6 +166,11 @@ public class JsonParser {
                         newLyft.setMaxPrice(-1);
                     }
                     newLyft.setTimeEstimate(-1);
+                }
+            }
+            for (Lyft lyft : lyfts) {
+                if(lyft.getPriceEstimate().equals("")) {
+                    lyft.setPriceEstimate("N/A");
                 }
             }
         } catch (Exception e) {
