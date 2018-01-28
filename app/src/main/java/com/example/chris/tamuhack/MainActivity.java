@@ -4,7 +4,13 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -71,6 +77,7 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = "";
     public static String INPUT_ADDRESS = " ";
     public static LatLng destinationCoords = new LatLng(0, 0);
+
 
     // Google Map Reference
     GoogleMap gMap;
@@ -194,6 +201,7 @@ public class MainActivity extends AppCompatActivity
                     uberButton.setText(uber.getVehicleType() + "\n" + timeEstimate + "\n" + priceEstimate);
                     uberButton.setBackgroundColor(Color.rgb(34, 34, 51));
                     uberButton.setTextColor(Color.WHITE);
+                    uberButton.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.uber_button));
                     uberButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -219,6 +227,7 @@ public class MainActivity extends AppCompatActivity
                     }
                     lyftButton.setText(lyft.getVehicleType() + "\n" + timeEstimate + "\n" + priceEstimate);
                     lyftButton.setBackgroundColor(Color.rgb(255, 0, 191));
+                    lyftButton.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.lyft_button));
                     lyftButton.setTextColor(Color.WHITE);
                     lyftButton.setOnClickListener(new View.OnClickListener() {
                         @Override
