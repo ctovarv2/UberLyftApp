@@ -1,6 +1,10 @@
 package com.example.chris.tamuhack;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.content.Context;
 import android.location.Location;
@@ -8,6 +12,7 @@ import android.location.LocationManager;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.HorizontalScrollView;
 import android.widget.TextView;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,11 +27,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,36 +45,56 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import com.google.android.gms.maps.model.MarkerOptions;
 
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener,
+                    OnMapReadyCallback {
+
+    // Default Coordinates in College Station
+    public static LatLng userCoords = new LatLng (30.581999499156245, -96.33768982383424);
+
+    // Uber/Lyft Information
     private static final String TAG = "";
     public static String INPUT_ADDRESS = " ";
+    public static LatLng destinationCoords = new LatLng(0, 0);
 
-    public static Double userLongitude = 0.0;
-    public static Double userLatitude = 0.0;
+    // Google Map Reference
+    GoogleMap gMap;
+    int zoom = 7;
 
-    GoogleMap mMap;
-
-
+    // Information Presentation
+    boolean showing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Action Button (Bottom Left Corner)
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Confirm Ride Selection", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if(showing == true){
+                    findViewById(R.id.selections).setVisibility(view.INVISIBLE);
+                    /*Snackbar.make(view, "Minimized Rides.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();*/
+                    showing = false;
+                } else {
+                    findViewById(R.id.selections).setVisibility(view.VISIBLE);
+                    Snackbar.make(view, "Confirm Ride Selection.", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    showing = true;
+                }
             }
         });
 
-        // Navigation
+        // Navigation Drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -76,7 +104,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        List<String> uberResponses = RideUtils.getAvailableUbers("https://api.uber.com/v1.2/estimates/time?start_latitude=30.615011&start_longitude=-96.342476", "https://api.uber.com/v1.2/estimates/price?start_latitude=30.615011&start_longitude=-96.342476&end_latitude=30.591330&end_longitude=-96.344744");
+        // Uber/Lyft Example
+        /*List<String> uberResponses = RideUtils.getAvailableUbers("https://api.uber.com/v1.2/estimates/time?start_latitude=30.615011&start_longitude=-96.342476", "https://api.uber.com/v1.2/estimates/price?start_latitude=30.615011&start_longitude=-96.342476&end_latitude=30.591330&end_longitude=-96.344744");
         List<String> lyftResponses = RideUtils.getAvailableLyfts("https://api.lyft.com/v1/eta?lat=30.615011&lng=-96.342476", "https://api.lyft.com/v1/cost?start_lat=30.615011&start_lng=-96.342476&end_lat=30.591330&end_lng=-96.344744");
         if(uberResponses != null && lyftResponses != null) {
             String uberTimes = uberResponses.get(0);
@@ -113,73 +142,129 @@ public class MainActivity extends AppCompatActivity
 
             } catch (Exception e) {
                 e.printStackTrace();
+            }*/
+
+        // Search Bar
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // handle selected location
+                System.out.println("Location: " + place.getAddress());
+                System.out.println("\t\t" + place.getLatLng());
+
+                // clear all existing markers
+                gMap.clear();
+
+                // add current location to map
+                gMap.addMarker(new MarkerOptions().position(userCoords)
+                        .title("Your Location."));
+
+                // add destination to map
+                destinationCoords = place.getLatLng();
+                gMap.addMarker(new MarkerOptions().position(place.getLatLng())
+                        .title("Destination."));
+
+                // new camera placement
+                LatLng midpoint = new LatLng((destinationCoords.latitude + userCoords.latitude) / 2.0,
+                        (destinationCoords.longitude + userCoords.longitude) / 2.0);
+
+                //System.out.println("Dest: " + destinationCoords + "\n, User:" + userCoords + "\n, Midpoint: " + midpoint);
+
+                // move camera to midpoint with default zoom
+                // zoom = 7;
+                gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(midpoint, zoom));
+
+                // if necessary adjust zoom to encompass the two markers
+
+                /*while(!gMap.getProjection().getVisibleRegion().latLngBounds.contains(userCoords) ||
+                        !gMap.getProjection().getVisibleRegion().latLngBounds.contains(destinationCoords)){
+
+                    System.out.println("NOT INCLUDED.");
+                    gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(midpoint, zoom - 1));
+                }*/
+
+                System.out.println("ZOOM: " + zoom);
             }
 
-
-            PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                    getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-
-            autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-                @Override
-                public void onPlaceSelected(Place place) {
-                    // TODO: Get info about the selected place.
-                    System.out.println("Place: " + place.getAddress());
-                    System.out.println("Place: " + place.getLatLng());
-                }
-
-                @Override
-                public void onError(Status status) {
-                    // TODO: Handle the error.
-                    System.out.println("An error occurred: " + status);
-                }
-            });
-
-
-            LocationManager locManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-            Boolean network_enabled = locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            Location location;
-
-
-            if (network_enabled == true) {
-                location = locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-                if (location != null) {
-                    userLongitude = location.getLongitude();
-                    userLatitude = location.getLatitude();
-
-                    System.out.println("----------------------------");
-                    System.out.println("User Lat/Long: " + userLatitude + ", " + userLongitude);
-                    System.out.println("----------------------------");
-
-
-                }
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                System.out.println("No location found. Error: " + status);
             }
+        });
 
-            //For Map
+        // User Location Request (If Necessary)
+        if(ContextCompat.checkSelfPermission(MainActivity.this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED){
+            System.out.println("Permissions Already Given");
+        } else{
+            // ask for permissions
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    1);
+        }
 
+        LocationManager locManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        Boolean network_enabled = locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        Location location;
 
-//        setContentView(R.layout.activity_maps);
-//
-//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-//                .findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(this);
+        if (network_enabled == true) {
+            location = locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
+            if (location != null) {
+                userCoords = new LatLng(location.getLatitude(), location.getLongitude());
 
-        CameraUpdateFactory.newLatLngZoom(new LatLng(userLatitude, userLongitude), 10);
+                System.out.println("----------------------------");
+                System.out.println("User Lat/Long: " + userCoords);
+                System.out.println("----------------------------");
+            }
+        }
 
+        // Google Maps
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
+        // If locations are not initially enabled, the result of the user's decision to enable
+        // location services is reported by this function.
+
+        if(requestCode == 1){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                System.out.println("Location Permission Granted.");
+            }
+            else{
+                System.out.println("Location Permission Denied.");
+            }
         }
     }
 
-    public void onMapReady(GoogleMap map){
-        mMap = map;
+    @Override
+    public void onMapReady(GoogleMap googleMap){
+        gMap = googleMap;
 
-        onComplete();
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCoords, zoom));
+
+        googleMap.addMarker(new MarkerOptions().position(userCoords)
+            .title(userCoords + "Your Location."));
     }
 
-    public void onComplete(){
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(userLatitude, userLongitude), 15));
-    }
+//    public void onMapReady(GoogleMap map){
+//        mMap = map;
+//
+//        onComplete();
+//    }
+
+//    public void onComplete(){
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+//                new LatLng(userLatitude, userLongitude), 15));
+//    }
 
     @Override
     public void onBackPressed() {
@@ -239,6 +324,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void saveAddress(View view){
+
+
 //        TextView tv1 = (TextView)findViewById(R.id.textView3);
 //        EditText inputField = (EditText) findViewById(R.id.editText);
 //        String address = inputField.getText().toString();
