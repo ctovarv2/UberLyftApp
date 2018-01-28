@@ -3,6 +3,7 @@ package com.example.chris.tamuhack;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -48,19 +49,26 @@ import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+
+import com.google.android.gms.maps.MapFragment;
+
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-                    OnMapReadyCallback {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     // Default Coordinates in College Station
     public static LatLng userCoords = new LatLng (30.581999499156245, -96.33768982383424);
@@ -97,7 +105,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(showing == true){
+                if (showing == true) {
                     findViewById(R.id.uber_selections).setVisibility(view.INVISIBLE);
                     findViewById(R.id.lyft_selections).setVisibility(view.INVISIBLE);
 //                    Snackbar.make(view, "Minimized Rides.", Snackbar.LENGTH_LONG)
@@ -156,6 +164,8 @@ public class MainActivity extends AppCompatActivity
 
                 gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(midpoint, zoom));
 
+
+
                 // if necessary adjust zoom to encompass the two markers
                 /*while(!gMap.getProjection().getVisibleRegion().latLngBounds.contains(userCoords) ||
                         !gMap.getProjection().getVisibleRegion().latLngBounds.contains(destinationCoords)){
@@ -173,10 +183,10 @@ public class MainActivity extends AppCompatActivity
                 Lyft cheapestLyft = RideUtils.getCheapestLyft(availableLyfts);
 
                 // Create buttons appropriately for ubers and lyfts
-                LinearLayout uberLayout = (LinearLayout)findViewById(R.id.uber_selections_layout);
+                LinearLayout uberLayout = (LinearLayout) findViewById(R.id.uber_selections_layout);
                 uberLayout.removeAllViews();
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                for(Uber uber : availableUbers) {
+                for (Uber uber : availableUbers) {
                     Button uberButton = new Button(MainActivity.this);
                     String timeEstimate = Integer.toString(uber.getTimeEstimate());
                     if (timeEstimate.equals("-1")) {
@@ -189,6 +199,7 @@ public class MainActivity extends AppCompatActivity
                         priceEstimate = "N/A";
                     }
                     uberButton.setText(uber.getVehicleType() + "\n" + timeEstimate + "\n" + priceEstimate);
+                    uberButton.setBackgroundColor(Color.rgb(34, 34, 51));
                     uberButton.setTextColor(Color.WHITE);
                     if (uber.getVehicleType().equals(cheapestUber.getVehicleType()) && uber.getVehicleType().equals(shortestUber.getVehicleType())) {
                         uberButton.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.uber_button_shortcheap));
@@ -208,9 +219,9 @@ public class MainActivity extends AppCompatActivity
                     uberLayout.addView(uberButton, layoutParams);
                 }
 
-                LinearLayout lyftLayout = (LinearLayout)findViewById(R.id.lyft_selections_layout);
+                LinearLayout lyftLayout = (LinearLayout) findViewById(R.id.lyft_selections_layout);
                 lyftLayout.removeAllViews();
-                for(Lyft lyft : availableLyfts) {
+                for (Lyft lyft : availableLyfts) {
                     Button lyftButton = new Button(MainActivity.this);
                     String timeEstimate = Integer.toString(lyft.getTimeEstimate());
                     if (timeEstimate.equals("-1")) {
@@ -251,11 +262,11 @@ public class MainActivity extends AppCompatActivity
         });
 
         // User Location Request (If Necessary)
-        if(ContextCompat.checkSelfPermission(MainActivity.this,
+        if (ContextCompat.checkSelfPermission(MainActivity.this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED){
+                == PackageManager.PERMISSION_GRANTED) {
             System.out.println("Permissions Already Given");
-        } else{
+        } else {
             // ask for permissions
             ActivityCompat.requestPermissions(MainActivity.this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -263,7 +274,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         // Once We Have Location Services Enabled By Default, Get Location
-        LocationManager locManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Boolean network_enabled = locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         Location location;
 
@@ -300,11 +311,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
     @Override
     public void onMapReady(GoogleMap googleMap){
         gMap = googleMap;
-
-        //gMap.setTrafficEnabled(true);
 
         gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userCoords, zoom));
 
