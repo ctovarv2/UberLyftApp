@@ -5,6 +5,7 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.TextView;
 import android.content.Intent;
@@ -31,8 +32,12 @@ import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -48,6 +53,8 @@ public class MainActivity extends AppCompatActivity
 
     public static Double userLongitude = 0.0;
     public static Double userLatitude = 0.0;
+
+    GoogleMap mMap;
 
 
 
@@ -113,9 +120,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         LocationManager locManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-
         Boolean network_enabled = locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
         Location location;
 
         if(network_enabled == true){
@@ -143,6 +148,17 @@ public class MainActivity extends AppCompatActivity
 //                .findFragmentById(R.id.map);
 //        mapFragment.getMapAsync(this);
 
+    }
+
+    public void onMapReady(GoogleMap map){
+        mMap = map;
+
+        onComplete();
+    }
+
+    public void onComplete(){
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(userLatitude, userLongitude), 15));
     }
 
     @Override
