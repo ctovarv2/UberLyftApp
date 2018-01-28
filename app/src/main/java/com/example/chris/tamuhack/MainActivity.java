@@ -190,7 +190,15 @@ public class MainActivity extends AppCompatActivity
                     }
                     uberButton.setText(uber.getVehicleType() + "\n" + timeEstimate + "\n" + priceEstimate);
                     uberButton.setTextColor(Color.WHITE);
-                    uberButton.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.uber_button));
+                    if (uber.getVehicleType().equals(cheapestUber.getVehicleType()) && uber.getVehicleType().equals(shortestUber.getVehicleType())) {
+                        uberButton.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.uber_button_shortcheap));
+                    } else if (uber.getVehicleType().equals(cheapestUber.getVehicleType())) {
+                        uberButton.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.uber_button_cheap));
+                    } else if (uber.getVehicleType().equals(shortestUber.getVehicleType())) {
+                        uberButton.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.uber_button_short));
+                    } else {
+                        uberButton.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.uber_button));
+                    }
                     uberButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -215,7 +223,15 @@ public class MainActivity extends AppCompatActivity
                         priceEstimate = "N/A";
                     }
                     lyftButton.setText(lyft.getVehicleType() + "\n" + timeEstimate + "\n" + priceEstimate);
-                    lyftButton.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.lyft_button));
+                    if (lyft.getVehicleType().equals(cheapestLyft.getVehicleType()) && lyft.getVehicleType().equals(shortestLyft.getVehicleType())) {
+                        lyftButton.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.lyft_button_shortcheap));
+                    } else if (lyft.getVehicleType().equals(cheapestLyft.getVehicleType())) {
+                        lyftButton.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.lyft_button_cheap));
+                    } else if (lyft.getVehicleType().equals(shortestLyft.getVehicleType())) {
+                        lyftButton.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.lyft_button_short));
+                    } else {
+                        lyftButton.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.lyft_button));
+                    }
                     lyftButton.setTextColor(Color.WHITE);
                     lyftButton.setOnClickListener(new View.OnClickListener() {
                         @Override
