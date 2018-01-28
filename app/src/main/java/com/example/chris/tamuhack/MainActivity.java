@@ -27,8 +27,12 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
@@ -38,7 +42,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     private static final String TAG = "";
     public static String INPUT_ADDRESS = " ";
@@ -164,6 +168,10 @@ public class MainActivity extends AppCompatActivity
 //                .findFragmentById(R.id.map);
 //        mapFragment.getMapAsync(this);
 
+            setContentView(R.layout.fragment_map);
+            MapFragment mapFragment = (MapFragment) getFragmentManager()
+                    .findFragmentById(R.id.map);
+           // mapFragment.getMapAsync(this);
 
         CameraUpdateFactory.newLatLngZoom(new LatLng(userLatitude, userLongitude), 10);
 
@@ -172,7 +180,11 @@ public class MainActivity extends AppCompatActivity
 
     public void onMapReady(GoogleMap map){
         mMap = map;
+        map.addMarker(new MarkerOptions()
+                .position(new LatLng(userLatitude, userLongitude))
+                .title("Marker"));
 
+        System.out.println("Marker set");
         onComplete();
     }
 
