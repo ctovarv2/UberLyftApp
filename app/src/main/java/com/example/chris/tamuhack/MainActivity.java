@@ -163,6 +163,10 @@ public class MainActivity extends AppCompatActivity
 //        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
 //                .findFragmentById(R.id.map);
 //        mapFragment.getMapAsync(this);
+
+
+        CameraUpdateFactory.newLatLngZoom(new LatLng(userLatitude, userLongitude), 10);
+
         }
     }
 
